@@ -17,6 +17,8 @@ try{
       const data={
         name:request.body.name,
         Code:request.body.code,
+        order:request.body.order,
+         type:request.body.type,
     }
 const insertData =new colorModal(data);//pass object
    await insertData.save()//insert query
@@ -26,6 +28,7 @@ const output={
     _status:true,
     _message:"record inserted ",
     _data:result
+
 }
 response.send(output);
 })
@@ -37,6 +40,7 @@ response.send(output);
  errormessages.push(error.errors[err].message);
 
      }
+     console.log(error);
 const output={
     _status:false,
     _message:"something went wrong",
@@ -59,14 +63,41 @@ response.send(output); //for syntax error
 
 }
 exports.view=async(request,response)=>{
-    if(request.body.name){
-        var filter={
-          name:request.body.name  
-        }
-    }else{
-var filter={};
-    }
-    await  colorModal.find(filter)
+//     if(request.body.name){
+//         var filter={
+//           name:request.body.name  //what if we want to extract data on the basis of number of orders,on basis of above price,below  price(range) like above 5 orders,5o orders etc.so we use query methods operators
+//         }
+//         //equality operators(model.find({same key:'same value'}),comparison operators($gt(greater than),$lt(leess than),$gte(greaterthan equal),$lte)ex:model.find({age:{$gt:18}}),logical operators($and,$or,$not)ex:model.find({$or:[{quantity:{$lt:20}},{price:10}]}),sorting methods
+//     }else{
+// var filter={};
+//     } //dynamic work
+
+//static method: comparison operator
+var filter={}; //total value available 
+// var filter={
+//     order:{
+//         $gte:5 //only those value get which is above 5(perform as per requirement by applying comparison operator).all the order erased which have value less than 5
+//     }
+// }
+
+
+// var filter={
+//     order:{
+//       $lte:5//get value less than 5
+//     }
+// }
+
+//logical operator:where we want check two conditions at a time by usin multiple operator within array
+//$and:check both condition
+//$or:both condition must be true
+//$not:means except this condition give all the other value
+
+
+//sorting:sort the result in ascnding or descending order based on a field.
+// model.find().sort({name:'asc'}); applied as like below
+
+    await  colorModal.find(filter).sort({name:'asc'}).limit(2).skip(2) //for ascending order(sorting),for decendeing do 'desc',we use limit()to get particular number of record,to skip n number of records and show nextrecord we use skip() function 
+    //limit(),skip() use to call paginationex:model.find().limit(10).skip(5);
 //  const insertData =new colorModal(data);//pass object
 //    await insertData.save()//insert query
 //    if insert query run then go to then()
